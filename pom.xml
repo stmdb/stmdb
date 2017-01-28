@@ -16,6 +16,8 @@
 
         <!-- properties specific to this project -->
         <dep.jsr305.version>3.0.1</dep.jsr305.version>
+        <dep.junit.version>4.12</dep.junit.version>
+        <dep.guava.version>21.0</dep.guava.version>
     </properties>
 
     <build>
@@ -58,6 +60,16 @@
                 <artifactId>jsr305</artifactId>
                 <version>${dep.jsr305.version}</version>
             </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${dep.junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${dep.guava.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -66,6 +78,16 @@
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
