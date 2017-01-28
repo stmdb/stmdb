@@ -15,6 +15,12 @@ import static org.junit.Assert.assertNull;
 public class ReadValueTest {
 
     @Test
+    public void init() {
+        ReadValue value = new ReadValue();
+        assertEquals(0, value.store.size());
+    }
+
+    @Test
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void read() {
         HashMap<String, Optional<?>> store = new HashMap<>();

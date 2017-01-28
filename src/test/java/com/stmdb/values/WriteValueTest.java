@@ -14,6 +14,13 @@ import static org.junit.Assert.assertNull;
 public class WriteValueTest {
 
     @Test
+    public void init() {
+        WriteValue value = new WriteValue();
+        assertEquals(0, value.store.size());
+        assertEquals(0, value.scratch.size());
+    }
+
+    @Test
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void read() {
         HashMap<String, Optional<?>> store = new HashMap<>();
@@ -90,4 +97,69 @@ public class WriteValueTest {
         assertEquals("foobar", value.getString("string").get());
     }
 
+    @Test
+    public void remove() {
+        HashMap<String, Optional<?>> store = new HashMap<>();
+        store.put("bool", Optional.of(Boolean.TRUE));
+        store.put("int", Optional.of(0));
+        store.put("long", Optional.of(0L));
+        store.put("string", Optional.of("hello world"));
+        store.put("empty", Optional.empty());
+        WriteValue value = new WriteValue(ImmutableMap.copyOf(store), new HashMap<>());
+        value.remove("bool");
+        value.remove("int");
+        value.remove("long");
+        value.remove("string");
+        value.remove("empty");
+        assertNull(value.getBoolean("bool"));
+        assertNull(value.getInt("int"));
+        assertNull(value.getLong("long"));
+        assertNull(value.getString("string"));
+        assertNull(value.getString("empty"));
+    }
+
+    @Test
+    public void freeze() {
+        HashMap<String, Optional<?>> store = new HashMap<>();
+        store.put("bool", Optional.of(Boolean.TRUE));
+        store.put("int", Optional.of(0));
+        store.put("long", Optional.of(0L));
+        store.put("string", Optional.of("hello world"));
+        store.put("empty", Optional.empty());
+        WriteValue write = new WriteValue(ImmutableMap.copyOf(store), new HashMap<>());
+        write.setBoolean("bool", Boolean.FALSE);
+        write.setInt("int", 1);
+        write.setLong("long", 1L);
+        write.setString("string", "foobar");
+        write.remove("empty");
+        ReadValue read = new ReadValue(write);
+        assertEquals(Boolean.FALSE, read.getBoolean("bool").get());
+        assertEquals(Integer.valueOf(1), read.getInt("int").get());
+        assertEquals(Long.valueOf(1L), read.getLong("long").get());
+        assertEquals("foobar", read.getString("string").get());
+        assertNull(read.getString("empty"));
+        assertNull(read.getString("missing"));
+    }
+
+    @Test
+    public void thaw() {
+        HashMap<String, Optional<?>> store = new HashMap<>();
+        store.put("bool", Optional.of(Boolean.TRUE));
+        store.put("int", Optional.of(0));
+        store.put("long", Optional.of(0L));
+        store.put("string", Optional.of("hello world"));
+        store.put("empty", Optional.empty());
+        ReadValue read = new ReadValue(ImmutableMap.copyOf(store));
+        WriteValue write = new WriteValue(read);
+        write.setBoolean("bool", Boolean.FALSE);
+        write.setInt("int", 1);
+        write.setLong("long", 1L);
+        write.setString("string", "foobar");
+        assertEquals(Boolean.FALSE, write.getBoolean("bool").get());
+        assertEquals(Integer.valueOf(1), write.getInt("int").get());
+        assertEquals(Long.valueOf(1L), write.getLong("long").get());
+        assertEquals("foobar", write.getString("string").get());
+        assertFalse(write.getString("empty").isPresent());
+        assertNull(write.getString("missing"));
+    }
 }

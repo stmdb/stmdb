@@ -11,6 +11,8 @@ import com.google.common.collect.ImmutableMap;
 
 public class WriteValue {
 
+    static final Optional TOMBSTONE = Optional.of(new Object());
+
     @Nonnull
     final ImmutableMap<String, Optional<?>> store;
 
@@ -39,6 +41,8 @@ public class WriteValue {
         Optional<?> opt = scratch.get(key);
         if (opt == null) {
             return store.get(key);
+        } else if (opt == TOMBSTONE) {
+            return null;
         } else {
             return opt;
         }
@@ -142,6 +146,9 @@ public class WriteValue {
     /**
      * Writes a (key, value) pair into the object where value is a Boolean.
      *
+     * Calling this method will a null value will not remove the key
+     * from the mapping. Use the {@link #remove(String)} method instead.
+     *
      */
     public void setBoolean(@Nonnull String key, @Nullable Boolean value) {
         scratch.put(key, Optional.ofNullable(value));
@@ -149,6 +156,9 @@ public class WriteValue {
 
     /**
      * Writes a (key, value) pair into the object where value is an Integer.
+     *
+     * Calling this method will a null value will not remove the key
+     * from the mapping. Use the {@link #remove(String)} method instead.
      *
      */
     public void setInt(@Nonnull String key, @Nullable Integer value) {
@@ -158,6 +168,9 @@ public class WriteValue {
     /**
      * Writes a (key, value) pair into the object where value is a Long.
      *
+     * Calling this method will a null value will not remove the key
+     * from the mapping. Use the {@link #remove(String)} method instead.
+     *
      */
     public void setLong(@Nonnull String key, @Nullable Long value) {
         scratch.put(key, Optional.ofNullable(value));
@@ -166,9 +179,20 @@ public class WriteValue {
     /**
      * Writes a (key, value) pair into the object where value is a String.
      *
+     * Calling this method will a null value will not remove the key
+     * from the mapping. Use the {@link #remove(String)} method instead.
+     *
      */
     public void setString(@Nonnull String key, @Nullable String value) {
         scratch.put(key, Optional.ofNullable(value));
+    }
+
+    /**
+     * Removes a (key, value) pair from the object.
+     *
+     */
+    public void remove(@Nonnull String key) {
+        scratch.put(key, TOMBSTONE);
     }
 
 }

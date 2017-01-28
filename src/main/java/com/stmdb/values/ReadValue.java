@@ -1,5 +1,7 @@
 package com.stmdb.values;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
@@ -22,10 +24,17 @@ public class ReadValue {
     }
 
     public ReadValue(@Nonnull WriteValue parent) {
-        ImmutableMap.Builder<String, Optional<?>> builder = ImmutableMap.builder();
-        builder.putAll(parent.store);
-        builder.putAll(parent.scratch);
-        this.store = builder.build();
+        HashMap<String, Optional<?>> copy = new HashMap<>(parent.store);
+        for (Map.Entry<String, Optional<?>> entry : parent.scratch.entrySet()) {
+            String key = entry.getKey();
+            Optional<?> value = entry.getValue();
+            if (value == WriteValue.TOMBSTONE) {
+                copy.remove(key);
+            } else {
+                copy.put(key, value);
+            }
+        }
+        this.store = ImmutableMap.copyOf(copy);
     }
 
     /**
