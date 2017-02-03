@@ -10,8 +10,7 @@ STMDB uses multiversion concurrency control to track the history of
 data objects. In a typical transactional memory system,
 previous versions of data objects are garbage collected when they are
 no longer referenced. STMDB stores this entire history in durable storage
-(or it will. Currently the entire history is stored in memory). The STMDB
-API allows the querying of data objects at any point or interval in time.
+(or it will. Currently the entire history is stored in memory).
 
 #### TODO List
 
